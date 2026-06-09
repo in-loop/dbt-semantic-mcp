@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: Customer dimension.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+  - name: dim_products
+    description: Product dimension.
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+  - name: fct_orders
+    description: >
+      Order-grain fact, all statuses. is_on_time compares shipped_date to
+      promised_ship_date; is_first_order marks a customer's first
+      non-cancelled order.
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+      - name: order_revenue
+        tests: [not_null]
+  - name: fct_order_items
+    description: >
+      Order-line fact, completed orders only — the grain revenue metrics are
+      defined on. Returned and cancelled orders are excluded here by the
+      revenue business rule.
+    columns:
+      - name: order_item_id
+        tests: [unique, not_null]
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_id
+      - name: line_revenue
+        tests: [not_null]

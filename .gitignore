@@ -98,3 +98,12 @@ uv.lock.bak
 # Jupyter / marimo
 .ipynb_checkpoints/
 .marimo/
+
+# dbt
+warehouse/target/
+warehouse/dbt_packages/
+warehouse/logs/
+*.duckdb
+*.duckdb.wal
+logs/
+warehouse/.user.yml

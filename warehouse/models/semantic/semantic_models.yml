@@ -1,0 +1,100 @@
+version: 2
+
+semantic_models:
+  - name: order_items
+    description: Order-line grain, completed orders only (the revenue grain).
+    model: ref('fct_order_items')
+    defaults:
+      agg_time_dimension: order_date
+    entities:
+      - name: order_item
+        type: primary
+        expr: order_item_id
+      - name: order
+        type: foreign
+        expr: order_id
+      - name: product
+        type: foreign
+        expr: product_id
+      - name: customer
+        type: foreign
+        expr: customer_id
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+    measures:
+      - name: line_revenue_sum
+        description: Sum of discounted line revenue (completed orders only).
+        agg: sum
+        expr: line_revenue
+      - name: units_sold_sum
+        description: Sum of quantities sold (completed orders only).
+        agg: sum
+        expr: quantity
+      - name: gross_profit_sum
+        description: Sum of line revenue minus line cost (completed orders only).
+        agg: sum
+        expr: gross_profit
+
+  - name: orders
+    description: Order grain, all statuses.
+    model: ref('fct_orders')
+    defaults:
+      agg_time_dimension: order_date
+    entities:
+      - name: order
+        type: primary
+        expr: order_id
+      - name: customer
+        type: foreign
+        expr: customer_id
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: status
+        type: categorical
+    measures:
+      - name: completed_order_count
+        description: Count of completed orders.
+        agg: sum
+        expr: case when status = 'completed' then 1 else 0 end
+      - name: first_order_count
+        description: Count of first non-cancelled orders per customer (new customers).
+        agg: sum
+        expr: case when is_first_order then 1 else 0 end
+      - name: on_time_shipment_count
+        description: Count of orders shipped on or before the promised date.
+        agg: sum
+        expr: case when is_on_time then 1 else 0 end
+      - name: shipped_order_count
+        description: Count of orders with a shipment.
+        agg: sum
+        expr: case when shipped_date is not null then 1 else 0 end
+
+  - name: customers
+    description: Customer dimension table.
+    model: ref('dim_customers')
+    entities:
+      - name: customer
+        type: primary
+        expr: customer_id
+    dimensions:
+      - name: region
+        type: categorical
+      - name: segment
+        type: categorical
+
+  - name: products
+    description: Product dimension table.
+    model: ref('dim_products')
+    entities:
+      - name: product
+        type: primary
+        expr: product_id
+    dimensions:
+      - name: category
+        type: categorical

@@ -1,0 +1,9 @@
+# Local DuckDB profile. The database file lands in warehouse/target/ (gitignored).
+# Override the path with DBT_DUCKDB_PATH if needed.
+dbt_semantic_mcp:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DBT_DUCKDB_PATH', 'target/warehouse.duckdb') }}"
+      threads: 4

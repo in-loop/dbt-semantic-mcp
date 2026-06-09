@@ -1,0 +1,71 @@
+version: 2
+
+metrics:
+  - name: revenue
+    label: Revenue
+    description: >
+      Discounted line revenue from completed orders. Returned and cancelled
+      orders are excluded.
+    type: simple
+    type_params:
+      measure: line_revenue_sum
+
+  - name: units_sold
+    label: Units sold
+    description: Quantity of units sold on completed orders.
+    type: simple
+    type_params:
+      measure: units_sold_sum
+
+  - name: gross_profit
+    label: Gross profit
+    description: Line revenue minus line cost on completed orders.
+    type: simple
+    type_params:
+      measure: gross_profit_sum
+
+  - name: order_count
+    label: Order count
+    description: Count of completed orders.
+    type: simple
+    type_params:
+      measure: completed_order_count
+
+  - name: average_order_value
+    label: Average order value
+    description: Revenue divided by completed-order count.
+    type: ratio
+    type_params:
+      numerator: revenue
+      denominator: order_count
+
+  - name: new_customers
+    label: New customers
+    description: >
+      Customers placing their first non-cancelled order in the period.
+    type: simple
+    type_params:
+      measure: first_order_count
+
+  - name: on_time_shipments
+    label: On-time shipments
+    description: Orders shipped on or before the promised date.
+    type: simple
+    type_params:
+      measure: on_time_shipment_count
+
+  - name: shipped_orders
+    label: Shipped orders
+    description: Orders with a shipment of any timeliness.
+    type: simple
+    type_params:
+      measure: shipped_order_count
+
+  - name: on_time_shipment_rate
+    label: On-time shipment rate
+    description: >
+      Share of shipped orders that shipped on or before the promised date.
+    type: ratio
+    type_params:
+      numerator: on_time_shipments
+      denominator: shipped_orders
