@@ -1,0 +1,70 @@
+# dbt-semantic-mcp
+
+DuckDB + dbt medallion marts + a governed semantic layer (MetricFlow), exposed to agents over MCP
+
+**Tier**: T1  **Language**: python  **Test discipline**: pragmatic
+
+This file is **read by every Claude Code session** that opens this repo.
+Keep it short, scannable, and load-bearing. Long-form prose belongs in
+`docs/`. Personal scratch notes (TODOs, ad-hoc commands, half-formed
+ideas) belong in `CLAUDE.local.md` (gitignored).
+
+## What this is
+
+One paragraph. Why the project exists, what it does, what it intentionally
+does NOT do. Update when the answer changes.
+
+## Build / test / lint
+
+All verbs go through `just`. Never run the underlying tool directly in
+docs — that creates two sources of truth.
+
+```sh
+just            # list all recipes
+just fmt        # auto-format
+just lint       # lint (warnings → errors)
+just test       # run tests per discipline (pragmatic)
+just build      # build release artifact
+just check      # fmt + lint + test (the merge gate)
+```
+
+Tier-2 release path:
+
+```sh
+just release patch    # tag + push (CI does the build/sign/SBOM/SLSA)
+just release minor
+just release major
+```
+
+## Architecture
+
+Three to five bullets. Where the code lives, what each top-level dir
+does, key invariants a newcomer can't infer from a `tree` listing.
+Update when the layout changes.
+
+- `src/` — primary source
+- `tests/` — see test-discipline (pragmatic)
+- `docs/` — long-form docs; ADRs in `docs/adr/`
+- `.github/workflows/` — CI; SHA-pinned actions
+
+## Conventions
+
+- **Conventional Commits**, signed (`git commit -sS`).
+- **Lockfile committed**.
+- **Pre-commit installed** — `pre-commit install` once after clone.
+- **GitHub Actions pinned by SHA** — Renovate / Dependabot keeps fresh.
+- **Container base images pinned by digest** if any.
+- **Structured logging** — no `print()` / `console.log` in committed code.
+
+## License
+
+See LICENSE files at repo root. Default scaffolding is Apache-2.0 OR MIT
+dual (apache-mit-dual).
+
+## See also
+
+- `CLAUDE.local.md` (gitignored) — your scratch notes for this repo.
+- `docs/adr/` — Architecture Decision Records.
+- `~/.claude/CLAUDE.md` (user-scope) — global invariants that apply
+  across every repo.
+- `~/Documents/coding-standard.md` — the standard this repo conforms to.
