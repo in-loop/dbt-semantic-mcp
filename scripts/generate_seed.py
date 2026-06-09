@@ -57,18 +57,20 @@ def _margin_price(rng: random.Random, lo: float, hi: float) -> tuple[float, floa
     return cost, price
 
 
-def write_csv(name: str, header: list[str], rows: list[list[object]]) -> None:
-    path = SEEDS_DIR / name
+def write_csv(
+    name: str, header: list[str], rows: list[list[object]], seeds_dir: Path = SEEDS_DIR
+) -> None:
+    path = seeds_dir / name
     with path.open("w", newline="") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator="\n")
         writer.writerow(header)
         writer.writerows(rows)
-    print(f"wrote {path.relative_to(Path.cwd())} ({len(rows)} rows)")
+    print(f"wrote {path} ({len(rows)} rows)")
 
 
-def main() -> None:
+def main(seeds_dir: Path = SEEDS_DIR) -> None:
     rng = random.Random(SEED)
-    SEEDS_DIR.mkdir(parents=True, exist_ok=True)
+    seeds_dir.mkdir(parents=True, exist_ok=True)
 
     products: list[list[object]] = []
     for pid in range(1, N_PRODUCTS + 1):
@@ -80,6 +82,7 @@ def main() -> None:
         "raw_products.csv",
         ["product_id", "product_name", "category", "unit_cost", "unit_price"],
         products,
+        seeds_dir=seeds_dir,
     )
 
     signup_span = (ORDER_DATE_END - SIGNUP_DATE_START).days
@@ -92,6 +95,7 @@ def main() -> None:
         "raw_customers.csv",
         ["customer_id", "customer_name", "region", "segment", "signup_date"],
         customers,
+        seeds_dir=seeds_dir,
     )
 
     order_span = (ORDER_DATE_END - ORDER_DATE_START).days
@@ -123,6 +127,7 @@ def main() -> None:
             ]
             for o in orders
         ],
+        seeds_dir=seeds_dir,
     )
 
     items: list[list[object]] = []
@@ -138,6 +143,7 @@ def main() -> None:
         "raw_order_items.csv",
         ["order_item_id", "order_id", "product_id", "quantity", "unit_price", "discount"],
         items,
+        seeds_dir=seeds_dir,
     )
 
     shipments: list[list[object]] = []
@@ -148,7 +154,12 @@ def main() -> None:
         sid += 1
         shipped = o.order_date + timedelta(days=rng.randint(1, 9))
         shipments.append([sid, o.order_id, shipped.isoformat()])
-    write_csv("raw_shipments.csv", ["shipment_id", "order_id", "shipped_date"], shipments)
+    write_csv(
+        "raw_shipments.csv",
+        ["shipment_id", "order_id", "shipped_date"],
+        shipments,
+        seeds_dir=seeds_dir,
+    )
 
 
 if __name__ == "__main__":

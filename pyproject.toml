@@ -24,6 +24,9 @@ dev = [
     "pip-audit>=2.7",
 ]
 
+[project.scripts]
+dbt-semantic-mcp = "dbt_semantic_mcp.server:main"
+
 [build-system]
 requires = ["hatchling>=1.25"]
 build-backend = "hatchling.build"

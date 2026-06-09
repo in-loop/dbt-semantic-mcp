@@ -50,6 +50,14 @@ jobs:
       - name: Type check (pyright)
         run: uv run pyright
 
+      - name: dbt build (seeds, models, tests)
+        run: uv run dbt build
+        working-directory: warehouse
+
+      - name: Validate semantic layer
+        run: uv run mf validate-configs
+        working-directory: warehouse
+
       # IF TEST_DISCIPLINE >= pragmatic:
       - name: Run tests
         run: uv run pytest -ra
