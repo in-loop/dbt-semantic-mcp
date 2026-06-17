@@ -11,14 +11,9 @@ models (39 tests) → 9 governed metrics defined once in MetricFlow YAML → a P
 server with three tools (`list_metrics`, `query_metric`, `describe_lineage`). An MCP
 host (Claude Desktop, Claude Code, or any MCP client) answers natural-language KPI
 questions by picking metrics from the catalog; every number comes from the same governed
-definitions an analyst would query. No SQL is composed from model or user input.
-
-## Why
-
-A small warehouse stack — dbt medallion marts + a governed semantic layer — made legible
-to agents over MCP: one set of metrics for people and LLMs alike. When each consumer
-(dashboard, REST endpoint, LLM) re-implements metric SQL, the numbers drift; here the
-analyst CLI and the agent read the same YAML definition.
+definitions an analyst would query. No SQL is composed from model or user input. When
+each consumer (dashboard, REST endpoint, LLM) re-implements metric SQL, the numbers
+drift; here the analyst CLI and the agent read the same MetricFlow YAML definition.
 
 ## Run
 
