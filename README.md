@@ -1,21 +1,18 @@
 # dbt-semantic-mcp
 
-> A DuckDB warehouse with dbt medallion marts, a MetricFlow semantic layer, and an
-> MCP server that answers KPI queries from the governed metrics. Apache-2.0 OR MIT.
-> Status: 0.1.0.
+An MCP server that answers KPI queries from governed MetricFlow metrics over a DuckDB warehouse with dbt medallion marts.
 
-## What
+## What it does
 
 A small warehouse stack, end to end: synthetic seed data → dbt staging/intermediate/mart
 models (39 tests) → 9 governed metrics defined once in MetricFlow YAML → a Python MCP
 server with three tools (`list_metrics`, `query_metric`, `describe_lineage`). An MCP
 host (Claude Desktop, Claude Code, or any MCP client) answers natural-language KPI
 questions by picking metrics from the catalog; every number comes from the same governed
-definitions an analyst would query. No SQL is composed from model or user input. When
-each consumer (dashboard, REST endpoint, LLM) re-implements metric SQL, the numbers
-drift; here the analyst CLI and the agent read the same MetricFlow YAML definition.
+definitions an analyst would query. No SQL is composed from model or user input. The
+analyst CLI and the agent read the same MetricFlow YAML definition, so a metric is single-sourced.
 
-## Run
+## Quickstart
 
 Requires [uv](https://docs.astral.sh/uv/). Python 3.12 and all packages are pinned by
 the lockfile.
@@ -67,7 +64,7 @@ Definitions in `warehouse/models/semantic/metrics.yml`; the business rules (reve
 counts completed orders only; a new customer is a first non-cancelled order) live in
 the YAML and the mart SQL, not in the server.
 
-## Layout
+## How it works
 
 - `scripts/generate_seed.py` — deterministic synthetic data (RNG seed 42); the committed
   CSVs are its output, verified by a test.
@@ -78,7 +75,13 @@ the YAML and the mart SQL, not in the server.
 - `tests/` — generator reproducibility, metric-vs-direct-SQL cross-check, lineage,
   stdio round-trip with a real MCP client.
 
-## Limits
+## Status
+
+0.1.0 (SemVer). Shipped: the full pipeline — seeds, 11 dbt models with 39 tests, 9
+MetricFlow metrics, and the MCP server with `list_metrics`, `query_metric`, and
+`describe_lineage` over stdio; 8 pytest tests including an MCP stdio round-trip.
+
+Boundaries:
 
 - Seed data, not production scale: 4,000 synthetic orders in one DuckDB file. The dbt
   patterns transfer; the operational concerns of a cloud warehouse (Snowflake/BigQuery),
